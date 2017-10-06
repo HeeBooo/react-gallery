@@ -14,9 +14,8 @@ import imageDatas from '../data/imageDatas.json';
 
 
 import '../scss/index.scss';
-
+// 单个图片
 import ImgFigure from './imgFigure';
-
 
 class Gallery extends React.Component {
     componentDidMount () {
@@ -38,8 +37,8 @@ class Gallery extends React.Component {
             data = this.componentDidMount();
 
         // 将单个图片插入到数组中,再将数组imgFigures放入section中
-        data.forEach((value) => {
-            imgFigures.push(<ImgFigure data={value} />)
+        data.forEach((value, index) => {
+            imgFigures.push(<ImgFigure data={value} key={'imgFigures'+index} />)
         })
 
         return (
