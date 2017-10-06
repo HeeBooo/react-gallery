@@ -1,0 +1,42 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    width: 100%;
+    height: 100%;
+    background-color: #222;
+}
+.root {
+    width: 100%;
+    height: 100%;
+}
+.stage {
+    position: relative;
+    width: 100%;
+    height: 680px;
+    .img-sec {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #ddd;
+        figure {
+            width: 150px;
+            height: 150px;
+            img {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    }
+    .controller-nav {
+        position: absolute;
+        left: 0;
+        bottom: 30px;
+        z-index: 101;
+        width: 100%;
+        text-align: center
+    }
+}
