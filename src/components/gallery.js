@@ -18,7 +18,7 @@ import '../scss/index.scss';
 
 
 // 单个图片
-function ImgFigure (props) {
+const ImgFigure = (props) =>{
     return (
         <figure className="img-figure">
             <img src={props.data.imageURL}
@@ -72,13 +72,7 @@ class Gallery extends Component {
         // stageW = stageDom.scrollWidth,
         // stageH = stageDom.scrollHeight;
         console.log(stageDom)
-
-        
-        
-
         return data;
-        
-        
     };
     componentDidUpdate () {
 
