@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+// 当应用规模过大时，建议使用单独的文件存放action
 import { addTodo, completeTodo, setVisibilityFilter, VisibilityFilters } from '../actions';
 import PropTypes from 'prop-types';
 
@@ -12,6 +13,7 @@ class App extends Component {
         const { dispatch, visibleTodos, visibilityFilter } = this.props;
         return (
             <div>
+                {/* 通过dispatch()将action传到store */}
                 <AddTodo onAddClick={text => dispatch(addTodo(text))} />
                 <TodoList todos = {visibleTodos}
                     onTodoClick={index => dispatch(completeTodo(index))}

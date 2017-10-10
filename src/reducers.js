@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+// 当应用规模过大时，建议使用单独的文件存放action
 import { ADD_TODO, COMPLETE_TODO, SET_VISIBILITY_FILTER, VisibilityFilters } from './actions';
 const { SHOW_ALL } = VisibilityFilters;
 
