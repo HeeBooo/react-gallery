@@ -10,26 +10,35 @@ const VisibilityFilters = {
     SHOW_ACTIVE: 'SHOW_ACTIVE'
   };
 
+// action 是行为的抽象, 是普通的js对象 必须有一个type
 // action 创建函数
-function addTodo(text) {
+const addTodo = (text) => {
     return {
-        type: COMPLETE_TODO,
+        type: ADD_TODO,
         text
     }
 };
 
-function completeTodo(index) {
+const completeTodo = (index) => {
     return {
         type: COMPLETE_TODO,
         index
     }
 };
 
-function setVisibilityFilter(filter) {
+const setVisibilityFilter = (filter) => {
     return {
         type: SET_VISIBILITY_FILTER,
         filter
     }
 };
 
-export {ADD_TODO, COMPLETE_TODO, SET_VISIBILITY_FILTER, VisibilityFilters, addTodo, completeTodo, setVisibilityFilter};
+export {
+    ADD_TODO, 
+    COMPLETE_TODO, 
+    SET_VISIBILITY_FILTER,
+    VisibilityFilters, 
+    addTodo,
+    completeTodo,
+    setVisibilityFilter
+};

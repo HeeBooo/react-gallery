@@ -2,16 +2,17 @@ import { combineReducers } from 'redux';
 import { ADD_TODO, COMPLETE_TODO, SET_VISIBILITY_FILTER, VisibilityFilters } from './actions';
 const { SHOW_ALL } = VisibilityFilters;
 
-function visibilityFilter(state = SHOW_ALL, action) {
+// reducer是响应的抽象，是一个纯方法，传入旧状态和action，返回一个新状态
+const visibilityFilter = (state = SHOW_ALL, action) => {
     switch (action.type) {
         case SET_VISIBILITY_FILTER:
             return action.filter;
         default:
             return state
     }
-}
+};
 
-function todos(state = [], action) {
+const todos = (state = [], action) => {
     switch (action.type) {
         case ADD_TODO:
             return [
@@ -32,11 +33,11 @@ function todos(state = [], action) {
         default:
             return state
     }
-}
+};
 
 const todoApp = combineReducers({
     visibilityFilter,
     todos
-  })
+});
   
-  export default todoApp
+export default todoApp;
