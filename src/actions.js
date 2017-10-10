@@ -1,4 +1,4 @@
-// action类型
+// action类型type常量
 const ADD_TODO = 'ADD_TODO'; // 添加todo选项
 const COMPLETE_TODO = 'COMPLETE_TODO';
 const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER';
@@ -20,7 +20,7 @@ const addTodo = (text) => {
         text
     }
 };
-// 待办项点一下变成完成
+// 待办项点一下变成完成(触发)
 const completeTodo = (index) => {
     return {
         type: COMPLETE_TODO,
@@ -40,7 +40,7 @@ export {
     COMPLETE_TODO, 
     SET_VISIBILITY_FILTER,
     VisibilityFilters, 
-    addTodo,
-    completeTodo,
-    setVisibilityFilter
+    addTodo, // 添加
+    completeTodo, // 触发
+    setVisibilityFilter // 设置可见
 };

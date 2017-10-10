@@ -6,8 +6,8 @@ class Todo extends Component {
         return (
             <li onClick={this.props.onClick}
                 style={{
-                    textDecoration: this.props.completed ? 'line-throug' : 'none',
-                    cursor: this.props.completed ? 'defautl' : 'pointer'
+                    textDecoration: this.props.completed ? 'line-through' : 'none',
+                    cursor: this.props.completed ? 'default' : 'pointer'
                 }}
             >
             {this.props.text}
