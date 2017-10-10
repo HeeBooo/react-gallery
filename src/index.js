@@ -1,8 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Gallery from './components/gallery'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+
+// import Gallery from './components/Gallery';
+import App from './components/App';
+import todoApp from './reducers';
+
+let store = createStore(todoApp),
+    rootElement = document.getElementById('root');
+
 
 ReactDOM.render(
-    <Gallery />,
-    document.getElementById('root')
+    <Provider store={store}>
+        <App />
+    </Provider>,
+    rootElement
 )
