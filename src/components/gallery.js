@@ -156,13 +156,13 @@ class Gallery extends Component {
             }
         
         }
-
+        
+        // 把取出来的顶部图片放回imgsArrangeArr数组中
         if (imgsArrangeTopArr && imgsArrangeTopArr[0]) {
-            imgsArrangeTopArr.splice(topImgSpliceIndex, 0, imgsArrangeTopArr[0])
+            imgsArrangeArr.splice(topImgSpliceIndex, 0, imgsArrangeTopArr[0])
         }
 
-        console.log(imgsArrangeArr)
-        imgsArrangeArr.splice(centerIndex, 0, imgsArrangeCenterArr[0])
+        imgsArrangeArr.splice(centerIndex, 0, imgsArrangeCenterArr[0]);
         this.setState({
             imgsArrangeArr: imgsArrangeArr
         })
@@ -195,22 +195,21 @@ class Gallery extends Component {
                 left: halfStageW - halfImgW,
                 top: halfStageH - halfImgH
             },
-            // 计算水平方向位置
+            // 计算左右两侧图片排布位置的取值范围
             hPosRange: {
-                leftSecX: [halfImgW, halfStageW - halfImgW * 3],
+                leftSecX: [-halfImgW, halfStageW - halfImgW * 3],
                 rightSecX: [halfStageW + halfImgW, stageW - halfImgW],
                 y: [-halfImgH, stageH - halfImgH]
             },
-            // 计算垂直方向位置
+            // 计算上侧图片排布位置的取值范围
             vPosRange: {
-                topY: [-halfImgH, halfStageH - halfImgW * 3],
-                x: [halfStageW - imgW, halfImgW]
+                topY: [-halfImgH, halfStageH - halfImgH * 3],
+                x: [halfStageW - imgW, halfStageW]
             }        
         }
   
-        // 随机生成一个0-10的整数在最中间展示
-        const randomNum = Math.floor(Math.random() * 11);
-        console.log(randomNum)
+        // 随机生成一个0-16的整数在最中间展示
+        const randomNum = Math.floor(Math.random() * 16);
         this.rearrange(randomNum);
     };
     
