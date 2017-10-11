@@ -19,6 +19,7 @@ import '../scss/index.scss';
 function getRangeRandom(low, high) {
     return Math.ceil(Math.random() * (high - low) + low);
 }
+
 // 将图片信息转为图片URL路径信息
 function genImageURL (imageDatasArr) {
     let singleImageData;
@@ -29,14 +30,15 @@ function genImageURL (imageDatasArr) {
     }
     return imageDatasArr;
 };
+
 // 单个图片组件
 class ImgFigure extends Component {
     render () {
         let styleObj = {};
         //  如果props属性中指定了这张图片的位置，则使用
-        // if (this.props.arrange.pos) {
-        //     styleObj = this.props.arrange.pos;
-        // }
+        if (this.props.arrange) {
+            styleObj = this.props.arrange.pos;
+        }
         return (
             <figure className="img-figure" style={styleObj}>
                 <img src={this.props.data.imageURL}
@@ -76,15 +78,32 @@ class Gallery extends Component {
             // 垂直方向取值范围
             vPosRange: {
                 x: [0, 0],
-                topy: [0, 0]
+                topY: [0, 0]
             }
         }
     };
 
     // 重新布局所有图片 centerIndex指定居中哪个图片
     rearrange (centerIndex) {
-        let imgsArrangeArr = this.state.imgsArrangeArr,
-            constant = this.constant,
+        // let imgsArrangeArr = this.state.imgsArrangeArr,
+        let imgsArrangeArr = [],
+        data = genImageURL(imageDatas);
+        // 如果当前没对象，则初始化
+        for (let i = 0; i < data.length; i++) {
+            if (!this.state.imgsArrangeArr[i]) {
+                imgsArrangeArr.push({
+                    pos: {
+                        left: 0,
+                        top: 0
+                    }
+                })
+            } else {
+                imgsArrangeArr.push(this.state.imgsArrangeArr[i])
+            }
+        }
+        console.log('初始化图片数组imgsArrangeArr:')
+        console.log(imgsArrangeArr)
+        let constant = this.constant,
             centerPos = constant.centerPos,
             hPosRange = constant.hPosRange,
             vPosRange = constant.vPosRange,
@@ -92,28 +111,34 @@ class Gallery extends Component {
             hPosRangeRightSecX = hPosRange.rightSecX,
             hPosRangeY = hPosRange.y,
             vPosRangeTopY = vPosRange.topY,
-            vPosRangeX = hPosRange.x,
-
+            vPosRangeX = vPosRange.x,
             imgsArrangeTopArr = [],
             topImgNum = Math.floor(Math.random() * 2), // 取一个或者不取
             topImgSpliceIndex = 0,
             imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex, 1);
-            console.log(imgsArrangeCenterArr)
-            
+
+        console.log(imgsArrangeArr)
+        console.log(imgsArrangeCenterArr)
+        
         // 首先居中centerIndex的图片
         imgsArrangeCenterArr[0].pos = centerPos;
-        
+        console.log('中心图片:');
+        console.log(imgsArrangeCenterArr);
         // 取出要布局上侧的图片的状态信息
         topImgSpliceIndex = Math.ceil(Math.random() * (imgsArrangeArr.length - topImgNum));
         imgsArrangeTopArr = imgsArrangeArr.splice(topImgSpliceIndex, topImgNum);
-
+        
         // 布局上侧图片
         imgsArrangeTopArr.forEach((value, index) => {
-            imgsArrangeTopArr[index].pos = {
-                top: getRangeRandom(vPosRangeTopY[0], vPosRangeTopY[1]),
-                left: getRangeRandom(vPosRangeX[0], vPosRangeX[1])
+            imgsArrangeTopArr[index] = {
+                pos: {
+                    top: getRangeRandom(vPosRangeTopY[0], vPosRangeTopY[1]),
+                    left: getRangeRandom(vPosRangeX[0], vPosRangeX[1])
+                }
             }
         })
+        console.log('顶部有' + topImgNum + '张图片:');
+        console.log(imgsArrangeTopArr)
         
         // 布局左右两侧的图片
         for(let i = 0, j = imgsArrangeArr.length, k = j / 2; i < j; i++) {
@@ -130,16 +155,17 @@ class Gallery extends Component {
                 left: getRangeRandom(hPosRangeLORX[0], hPosRangeLORX[1])
             }
         
-            if (imgsArrangeTopArr && imgsArrangeTopArr[0]) {
-                imgsArrangeTopArr.splice(topImgSpliceIndex, 0, imgsArrangeTopArr[0])
-            }
-
-            imgsArrangeArr.splice(centerIndex, 0, imgsArrangeCenterArr[0])
-            console.log(imgsArrangeArr)
-            this.setState({
-                imgsArrangeArr: imgsArrangeArr
-            })
         }
+
+        if (imgsArrangeTopArr && imgsArrangeTopArr[0]) {
+            imgsArrangeTopArr.splice(topImgSpliceIndex, 0, imgsArrangeTopArr[0])
+        }
+
+        console.log(imgsArrangeArr)
+        imgsArrangeArr.splice(centerIndex, 0, imgsArrangeCenterArr[0])
+        this.setState({
+            imgsArrangeArr: imgsArrangeArr
+        })
     };
 
     componentDidMount () {
@@ -178,11 +204,14 @@ class Gallery extends Component {
             // 计算垂直方向位置
             vPosRange: {
                 topY: [-halfImgH, halfStageH - halfImgW * 3],
-                topX: [halfImgW - imgW, halfImgW],
                 x: [halfStageW - imgW, halfImgW]
             }        
         }
-        this.rearrange(0);
+  
+        // 随机生成一个0-10的整数在最中间展示
+        const randomNum = Math.floor(Math.random() * 11);
+        console.log(randomNum)
+        this.rearrange(randomNum);
     };
     
     render () {
@@ -191,15 +220,6 @@ class Gallery extends Component {
             data = genImageURL(imageDatas);
         // 将单个图片插入到数组中,再将数组imgFigures放入section中
         data.forEach((value, index) => {
-            // 如果当前没对象，则初始化
-            if (!this.state.imgsArrangeArr[index]) {
-                this.state.imgsArrangeArr[index] = {
-                    pos: {
-                        left: 0,
-                        top: 0
-                    },
-                };
-            }
             imgFigures.push(
                 <ImgFigure 
                     data={value} 
