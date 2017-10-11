@@ -20,6 +20,11 @@ function getRangeRandom(low, high) {
     return Math.ceil(Math.random() * (high - low) + low);
 }
 
+// 获取0到30度之间的任意正负值
+function get30DegRandom() {
+    const baseDeg = 30;
+    return ((Math.random() > 0.5 ? '' : '-') + Math.ceil(Math.random() * baseDeg));
+}
 // 将图片信息转为图片URL路径信息
 function genImageURL (imageDatasArr) {
     let singleImageData;
@@ -33,18 +38,37 @@ function genImageURL (imageDatasArr) {
 
 // 单个图片组件
 class ImgFigure extends Component {
+    
+    handleClick = (e) => {
+        // console.log('123')
+        this.props.inverse();
+        e.stopPropagation();
+        e.preventDefault(); 
+    };
+
     render () {
+        const { arrange, data } = this.props;
         let styleObj = {};
+        let imgFigureClassName = "img-figure";
         //  如果props属性中指定了这张图片的位置，则使用
-        if (this.props.arrange) {
-            styleObj = this.props.arrange.pos;
+        if (arrange) {
+            styleObj = arrange.pos;
+            // 如果图片的旋转角度有值并且不为0，添加旋转角度
+            ['Moz', 'ms', 'Webkit', ''].forEach(value => {
+                styleObj['transform'] = 'rotate(' + arrange.rotate + 'deg)';
+			});
+	        //设置图片翻转样式  正面 .img-figure   反面 .img-figure is-inverse
+            imgFigureClassName += arrange.isInverse ? ' is-inverse' : '';
         }
+        
         return (
-            <figure className="img-figure" style={styleObj}>
-                <img src={this.props.data.imageURL}
-                     alt={this.props.data.title} />
+            <figure className={imgFigureClassName} style={styleObj} onClick={this.handleClick}>
+                <img src={data.imageURL} alt={data.title} />    
                 <figcaption>
-                    <h2 className="img-title">{this.props.data.desc}</h2>
+                    <h2 className="img-title">{data.title}</h2>
+                    <div className="img-back" onClick={this.handleClick}>
+                        <p>{data.desc}</p>
+                    </div>
                 </figcaption>
             </figure>
         )
@@ -57,10 +81,12 @@ class Gallery extends Component {
         this.state = {
             imgsArrangeArr: [
                 // {
-                    // pos: {
-                    //     left: '0',
-                    //     top: '0'
-                    // }
+                //     pos: {
+                //         left: '0',
+                //         top: '0'
+                //     },
+                //     rotate: 0,  // 旋转角度
+                //     isInverse: false // 正反面
                 // }
             ]
         };
@@ -80,29 +106,13 @@ class Gallery extends Component {
                 x: [0, 0],
                 topY: [0, 0]
             }
-        }
+        };
     };
 
     // 重新布局所有图片 centerIndex指定居中哪个图片
     rearrange (centerIndex) {
-        // let imgsArrangeArr = this.state.imgsArrangeArr,
-        let imgsArrangeArr = [],
-        data = genImageURL(imageDatas);
-        // 如果当前没对象，则初始化
-        for (let i = 0; i < data.length; i++) {
-            if (!this.state.imgsArrangeArr[i]) {
-                imgsArrangeArr.push({
-                    pos: {
-                        left: 0,
-                        top: 0
-                    }
-                })
-            } else {
-                imgsArrangeArr.push(this.state.imgsArrangeArr[i])
-            }
-        }
-        console.log('初始化图片数组imgsArrangeArr:')
-        console.log(imgsArrangeArr)
+        let imgsArrangeArr = this.state.imgsArrangeArr;
+        
         let constant = this.constant,
             centerPos = constant.centerPos,
             hPosRange = constant.hPosRange,
@@ -117,11 +127,15 @@ class Gallery extends Component {
             topImgSpliceIndex = 0,
             imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex, 1);
 
-        console.log(imgsArrangeArr)
         console.log(imgsArrangeCenterArr)
         
-        // 首先居中centerIndex的图片
-        imgsArrangeCenterArr[0].pos = centerPos;
+        // 首先居中centerIndex的图片,不需要旋转
+        imgsArrangeCenterArr[0] = {
+            pos: centerPos,
+            rotate: 0,
+            isInverse: false
+        };
+        
         console.log('中心图片:');
         console.log(imgsArrangeCenterArr);
         // 取出要布局上侧的图片的状态信息
@@ -134,11 +148,13 @@ class Gallery extends Component {
                 pos: {
                     top: getRangeRandom(vPosRangeTopY[0], vPosRangeTopY[1]),
                     left: getRangeRandom(vPosRangeX[0], vPosRangeX[1])
-                }
+                },
+                rotate: get30DegRandom(),
+                isInverse: false
             }
         })
         console.log('顶部有' + topImgNum + '张图片:');
-        console.log(imgsArrangeTopArr)
+        console.log(imgsArrangeTopArr[0])
         
         // 布局左右两侧的图片
         for(let i = 0, j = imgsArrangeArr.length, k = j / 2; i < j; i++) {
@@ -150,11 +166,14 @@ class Gallery extends Component {
                 hPosRangeLORX = hPosRangeRightSecX;
             }
 
-            imgsArrangeArr[i].pos = {
-                top: getRangeRandom(hPosRangeY[0], hPosRangeY[1]),
-                left: getRangeRandom(hPosRangeLORX[0], hPosRangeLORX[1])
+            imgsArrangeArr[i] = {
+                pos: {
+                    top: getRangeRandom(hPosRangeY[0], hPosRangeY[1]),
+                    left: getRangeRandom(hPosRangeLORX[0], hPosRangeLORX[1])
+                },
+                rotate: get30DegRandom(),
+                isInverse: false
             }
-        
         }
         
         // 把取出来的顶部图片放回imgsArrangeArr数组中
@@ -166,6 +185,17 @@ class Gallery extends Component {
         this.setState({
             imgsArrangeArr: imgsArrangeArr
         })
+    };
+
+    // 翻转图片，输入当前被执行inverse操作的图片对应的图片信息数组的index值
+    inverse = (index) => {
+        return () => {
+            let imgsArrangeArr = this.state.imgsArrangeArr;
+            imgsArrangeArr[index].isInverse = !imgsArrangeArr[index].isInverse;
+            this.setState({
+                imgsArrangeArr: imgsArrangeArr
+            });
+        };
     };
 
     componentDidMount () {
@@ -187,7 +217,6 @@ class Gallery extends Component {
             imgH = imgFigureDom.scrollHeight,
             halfImgW = Math.ceil(imgW / 2),
             halfImgH = Math.ceil(imgH / 2);
-
 
         this.constant = {
             // 计算中心图片的位置点
@@ -216,15 +245,31 @@ class Gallery extends Component {
     render () {
         let controllerUnits = [],
             imgFigures = [],
-            data = genImageURL(imageDatas);
+            data = genImageURL(imageDatas),
+            imgsArrangeArr = this.state.imgsArrangeArr;
         // 将单个图片插入到数组中,再将数组imgFigures放入section中
         data.forEach((value, index) => {
+            // 如果当前没对象，则初始化
+            for (let i = 0; i < data.length; i++) {
+                if (!imgsArrangeArr[i]) {
+                    imgsArrangeArr.push({
+                        pos: {
+                            left: 0,
+                            top: 0
+                        },
+                        rotate: 0,
+                        isInverse: false
+                    })
+                }
+            }
+
             imgFigures.push(
                 <ImgFigure 
                     data={value} 
-                    key={'imgFigure'+index} 
-                    ref={'imgFigure'+index} 
-                    arrange={this.state.imgsArrangeArr[index]}
+                    key={'imgFigure' + index} 
+                    ref={'imgFigure' + index} 
+                    arrange={imgsArrangeArr[index]}
+                    inverse={this.inverse(index)}
                 />
             )
         })
